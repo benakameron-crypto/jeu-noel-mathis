@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jeu de Noël · Gagne 10 coupes gratuites chez Mathis</title>
+<meta name="description" content="Pour Noël, Mathis offre 10 coupes gratuites à un client tiré au sort. Participation gratuite et sans obligation d'achat.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🎄 Gagne 10 coupes gratuites chez Mathis">
+<meta property="og:description" content="Le grand jeu de Noël de Mathis, barber. Participation gratuite, tirage au sort à Noël.">
+<meta property="og:url" content="https://jeu-noel-mathis.vercel.app/">
+<meta property="og:image" content="https://jeu-noel-mathis.vercel.app/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a1226">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%85%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="inter.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:Fraunces;src:url(fraunces.woff2) format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:Inter;src:url(inter.woff2) format('woff2');font-weight:100 900;font-display:swap}
+:root{
+  --night:#0a1226;--night2:#0f1b38;--card:rgba(20,32,64,.72);--line:rgba(255,236,200,.14);
+  --fg:#fff8ec;--muted:#c6cde2;--gold:#f2c25b;--gold2:#ffe6a8;--red:#e23b48;--green:#38b27a;
+  --max:1180px;--r:22px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--night);color:var(--fg);font:400 17px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:10px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-999px;top:10px;z-index:99;background:var(--gold);color:#1a1205;padding:10px 16px;border-radius:10px;font-weight:700}
+.skip:focus{left:10px}
+
+/* ciel étoilé */
+.sky{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(900px 600px at 72% 30%,rgba(255,170,90,.16),transparent 60%),
+    radial-gradient(800px 500px at 10% 0%,rgba(90,130,255,.18),transparent 60%),
+    linear-gradient(180deg,#0a1430 0%,#0d1838 45%,#0a1226 100%)}
+.sky::before,.sky::after{content:"";position:absolute;inset:0;background-repeat:repeat;opacity:.75}
+.sky::before{background-image:
+  radial-gradient(1.2px 1.2px at 20px 30px,#fff 60%,transparent 61%),
+  radial-gradient(1px 1px at 120px 80px,#fff 60%,transparent 61%),
+  radial-gradient(1.4px 1.4px at 200px 160px,#ffe9c2 60%,transparent 61%),
+  radial-gradient(1px 1px at 60px 200px,#fff 60%,transparent 61%),
+  radial-gradient(1px 1px at 170px 20px,#cfe0ff 60%,transparent 61%);
+  background-size:240px 240px}
+.sky::after{background-image:
+  radial-gradient(1px 1px at 40px 90px,#fff 60%,transparent 61%),
+  radial-gradient(1.6px 1.6px at 300px 260px,#fff 60%,transparent 61%),
+  radial-gradient(1px 1px at 330px 40px,#ffe9c2 60%,transparent 61%);
+  background-size:380px 380px;opacity:.5;animation:tw 4s ease-in-out infinite alternate}
+@keyframes tw{to{opacity:.15}}
+
+/* en-tête */
+.top{position:absolute;top:0;left:0;right:0;z-index:10}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:76px}
+.mark{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 18px/1 Fraunces,serif;letter-spacing:.01em}
+.mark svg{color:var(--gold)}
+.mark small{font:600 11px/1 Inter;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-left:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;text-decoration:none;
+  font:700 16px/1 Inter;padding:17px 28px;border-radius:999px;color:#2a1a02;
+  background:linear-gradient(180deg,#ffe7a6 0%,#f2c25b 45%,#d99b2e 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 -2px 0 rgba(120,70,0,.35) inset,0 12px 30px rgba(242,180,70,.3);
+  transition:transform .15s ease,box-shadow .2s ease,filter .2s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 -2px 0 rgba(120,70,0,.35) inset,0 16px 40px rgba(242,180,70,.42)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.7;cursor:progress;transform:none}
+.btn.sm{padding:12px 20px;font-size:14px}
+.btn.ghost{background:rgba(255,255,255,.06);color:var(--fg);box-shadow:0 0 0 1px var(--line) inset}
+
+/* hero */
+.hero{position:relative}
+#scene{display:block;width:100%;height:100%;pointer-events:none}
+.fallback{display:none;width:100%;height:100%;object-fit:cover}
+.no3d #scene{display:none}.no3d .fallback{display:block}
+.stage{position:relative}
+.stage::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:28%;pointer-events:none;background:linear-gradient(180deg,rgba(10,18,38,0),#0a1226)}
+@media (max-width:979px){.fallback{object-position:72% 60%}}
+.hero-copy{position:relative;z-index:2}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;font:600 13px/1 Inter;letter-spacing:.04em;
+  color:var(--gold2);background:rgba(242,194,91,.1);box-shadow:0 0 0 1px rgba(242,194,91,.3) inset}
+h1{font:800 clamp(40px,6.2vw,82px)/1.02 Fraunces,Georgia,serif;letter-spacing:-.02em;margin:22px 0 18px;text-wrap:balance}
+.gold{background:linear-gradient(180deg,#fff2c9 0%,#f6cf6e 45%,#d4952a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 18px rgba(242,180,70,.25))}
+.lead{font-size:19px;color:var(--muted);max-width:520px}
+.lead strong{color:var(--fg);font-weight:600}
+.count{display:flex;gap:10px;margin:28px 0 30px}
+.count div{min-width:74px;padding:12px 10px 10px;text-align:center;border-radius:16px;background:rgba(10,18,38,.55);box-shadow:0 0 0 1px var(--line) inset;backdrop-filter:blur(6px)}
+.count b{display:block;font:700 30px/1 Fraunces,serif;color:var(--gold2);font-variant-numeric:tabular-nums}
+.count span{font:600 11px/1 Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.count-label{font:600 13px Inter;color:var(--muted);margin-top:26px}
+.count-label + .count{margin-top:10px}
+.free{margin-top:16px;font-size:14px;color:var(--muted)}
+
+@media (min-width:980px){
+  .hero{min-height:max(680px,100svh)}
+  .stage{position:absolute;inset:0}
+  .hero-copy{display:flex;align-items:center;min-height:max(680px,100svh);padding:96px 0 60px}
+  .hero-copy .inner{max-width:560px}
+  .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,rgba(10,18,38,.55) 0%,rgba(10,18,38,.2) 38%,transparent 55%)}
+}
+@media (max-width:979px){
+  .stage{height:min(96vw,560px);margin-top:64px}
+  .hero-copy{padding:8px 0 40px;text-align:center}
+  .hero-copy .inner{max-width:620px;margin:0 auto}
+  .lead{margin:0 auto}
+  .count{justify-content:center}
+  h1{margin-top:14px}
+}
+@media (max-width:420px){.mark small{display:none}.count div{min-width:64px}.count b{font-size:26px}.hero-copy .btn,form .btn{width:100%}}
+
+/* sections */
+section.block{padding:90px 0}
+.kicker{font:600 13px Inter;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+h2{font:700 clamp(30px,4.2vw,48px)/1.08 Fraunces,Georgia,serif;letter-spacing:-.01em;margin:12px 0 14px;text-wrap:balance}
+.sub{color:var(--muted);max-width:600px}
+.center{text-align:center}.center .sub{margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:46px}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+.step{position:relative;padding:30px 28px;border-radius:var(--r);background:var(--card);box-shadow:0 0 0 1px var(--line) inset;overflow:hidden}
+.step .num{position:absolute;right:18px;top:6px;font:800 84px/1 Fraunces,serif;color:rgba(242,194,91,.12)}
+.step .ic{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin-bottom:18px;color:#2a1a02;
+  background:linear-gradient(180deg,#ffe7a6,#e0a63c);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 8px 20px rgba(242,180,70,.25)}
+.step h3{font:700 21px/1.2 Fraunces,serif;margin-bottom:8px}
+.step p{color:var(--muted);font-size:16px}
+
+/* formulaire */
+.formwrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+@media(max-width:900px){.formwrap{grid-template-columns:1fr;gap:28px}}
+.prize{display:flex;gap:18px;align-items:center;margin-top:28px;padding:20px;border-radius:20px;background:rgba(242,194,91,.08);box-shadow:0 0 0 1px rgba(242,194,91,.25) inset}
+.prize .big{font:800 54px/1 Fraunces,serif;color:var(--gold2)}
+.prize p{color:var(--muted);font-size:15px}.prize strong{color:var(--fg)}
+.card{position:relative;padding:36px;border-radius:28px;background:linear-gradient(180deg,rgba(28,44,86,.86),rgba(16,26,54,.92));
+  box-shadow:0 0 0 1px rgba(255,236,200,.16) inset,0 30px 80px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:29px;padding:1px;pointer-events:none;
+  background:linear-gradient(140deg,rgba(242,194,91,.7),rgba(242,194,91,0) 35%,rgba(226,59,72,0) 65%,rgba(226,59,72,.5));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+@media(max-width:520px){.card{padding:24px 18px}}
+.card h3{font:700 26px/1.2 Fraunces,serif;margin-bottom:6px}
+.card .hint{color:var(--muted);font-size:15px;margin-bottom:22px}
+form{display:grid;gap:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+.field label{display:block;font:600 14px Inter;margin-bottom:7px}
+.field label .opt{font-weight:500;color:var(--muted)}
+.field input{width:100%;font:inherit;font-size:16px;color:var(--fg);padding:14px 15px;border-radius:14px;border:0;
+  background:rgba(6,12,28,.6);box-shadow:0 0 0 1px rgba(255,255,255,.12) inset;transition:box-shadow .15s}
+.field input::placeholder{color:#7f8aa8}
+.field input:focus{outline:none;box-shadow:0 0 0 2px var(--gold) inset,0 0 0 5px rgba(242,194,91,.18)}
+.field input[aria-invalid=true]{box-shadow:0 0 0 2px #ff7b84 inset}
+.err{display:none;margin-top:6px;font-size:13px;color:#ffb0b6}
+.err.on{display:block}
+.consent{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:rgba(6,12,28,.4);box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;cursor:pointer}
+.consent input{appearance:none;flex:none;width:22px;height:22px;margin-top:1px;border-radius:7px;cursor:pointer;
+  background:rgba(6,12,28,.7);box-shadow:0 0 0 1.5px rgba(255,255,255,.35) inset;display:grid;place-items:center}
+.consent input:checked{background:linear-gradient(180deg,#ffe7a6,#e0a63c);box-shadow:none}
+.consent input:checked::after{content:"";width:6px;height:11px;border:solid #2a1a02;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.consent input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.consent span{font-size:14.5px;color:var(--fg);line-height:1.5}
+.consent.invalid{box-shadow:0 0 0 2px #ff7b84 inset}
+.hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+.legal{font-size:13px;color:var(--muted);text-align:center}
+.legal a{color:var(--gold2)}
+.status{display:none;padding:14px 16px;border-radius:14px;font-size:15px;background:rgba(226,59,72,.12);box-shadow:0 0 0 1px rgba(226,59,72,.4) inset;color:#ffd0d4}
+.status.on{display:block}
+.done{display:none;text-align:center;padding:16px 4px}
+.done.on{display:block}
+.done .seal{width:84px;height:84px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;color:#2a1a02;
+  background:radial-gradient(circle at 35% 30%,#fff3c9,#f2c25b 55%,#c98a22);box-shadow:0 14px 40px rgba(242,180,70,.35);animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+.done h3{font-size:28px}
+.done p{color:var(--muted);margin:8px auto 22px;max-width:380px}
+.closed{display:none;text-align:center;padding:10px}
+.is-closed .closed{display:block}.is-closed form,.is-closed .done,.is-closed .card .hint{display:none}
+
+/* règlement */
+details{max-width:820px;margin:34px auto 0;border-radius:20px;background:var(--card);box-shadow:0 0 0 1px var(--line) inset}
+summary{cursor:pointer;list-style:none;padding:22px 26px;font:700 19px Fraunces,serif;display:flex;justify-content:space-between;align-items:center;gap:14px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:400 28px/1 Inter;color:var(--gold)}
+details[open] summary::after{content:"−"}
+.rules{padding:0 26px 24px;color:var(--muted);font-size:15.5px}
+.rules ol{padding-left:20px;display:grid;gap:10px}
+.rules strong{color:var(--fg)}
+
+footer{padding:40px 0 50px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+footer a{color:var(--gold2);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.sky::after{animation:none}.done .seal{animation:none}}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+</head>
+<body>
+<a class="skip" href="#participer">Aller au formulaire</a>
+<div class="sky" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#" aria-label="Mathis, barber : haut de page">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6M12 12h.01"/></svg>
+      Mathis <small>Barber</small>
+    </a>
+    <a class="btn sm" href="#participer">Je participe</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="titre">
+    <div class="stage">
+      <canvas id="scene" aria-hidden="true"></canvas>
+      <img class="fallback" src="fallback.jpg" alt="">
+    </div>
+    <div class="wrap hero-copy">
+      <div class="inner">
+        <p class="eyebrow">🎄 Jeu de Noël · Participation gratuite</p>
+        <h1 id="titre">Gagne <span class="gold">10 coupes gratuites</span> chez Mathis</h1>
+        <p class="lead">Pour Noël, Mathis offre <strong>10 coupes</strong> à un de ses clients, tiré au sort. Inscris-toi en moins d'une minute&nbsp;: c'est <strong>gratuit</strong> et sans obligation d'achat.</p>
+        <p class="count-label" id="countLabel">Fin du jeu dans</p>
+        <div class="count" id="count" role="timer" aria-labelledby="countLabel">
+          <div><b id="cd-d">--</b><span>jours</span></div>
+          <div><b id="cd-h">--</b><span>heures</span></div>
+          <div><b id="cd-m">--</b><span>min</span></div>
+          <div><b id="cd-s">--</b><span>sec</span></div>
+        </div>
+        <a class="btn" href="#participer" id="heroCta">Je tente ma chance <span aria-hidden="true">🎁</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="comment">
+    <div class="wrap center">
+      <p class="kicker">Comment ça marche</p>
+      <h2 id="comment">Trois étapes, zéro prise de tête</h2>
+      <p class="sub">Une seule participation suffit pour être dans le tirage.</p>
+      <div class="steps">
+        <article class="step reveal">
+          <span class="num" aria-hidden="true">1</span>
+          <div class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+          <h3>Tu remplis le formulaire</h3>
+          <p>Ton prénom, ton nom et ton e-mail. Le téléphone est facultatif.</p>
+        </article>
+        <article class="step reveal">
+          <span class="num" aria-hidden="true">2</span>
+          <div class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8S10.5 3 8 3a2.5 2.5 0 0 0 0 5h4ZM12 8s1.5-5 4-5a2.5 2.5 0 0 1 0 5h-4Z"/></svg></div>
+          <h3>Tirage au sort à Noël</h3>
+          <p>Un gagnant est tiré au sort parmi toutes les participations.</p>
+        </article>
+        <article class="step reveal">
+          <span class="num" aria-hidden="true">3</span>
+          <div class="ic" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.6 7.6 20 18M8.6 16.4 20 6"/></svg></div>
+          <h3>Tu profites de tes 10 coupes</h3>
+          <p>Mathis contacte le gagnant par e-mail ou par téléphone.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="participer" aria-labelledby="titreForm">
+    <div class="wrap formwrap">
+      <div class="reveal">
+        <p class="kicker">Participation</p>
+        <h2 id="titreForm">Tente ta chance pour Noël</h2>
+        <p class="sub">Remplis le formulaire&nbsp;: ta participation est envoyée directement à Mathis.</p>
+        <div class="prize">
+          <span class="big">10</span>
+          <p><strong>coupes gratuites</strong> pour un gagnant tiré au sort. Participation gratuite et sans obligation d'achat.</p>
+        </div>
+      </div>
+
+      <div class="card reveal" id="card">
+        <h3 class="form-title">Je participe</h3>
+        <p class="hint">Les champs marqués d'un * sont obligatoires.</p>
+
+        <form id="form" novalidate>
+          <div class="row">
+            <div class="field">
+              <label for="prenom">Prénom *</label>
+              <input id="prenom" name="prenom" autocomplete="given-name" maxlength="60" required aria-describedby="e-prenom">
+              <p class="err" id="e-prenom">Indique ton prénom.</p>
+            </div>
+            <div class="field">
+              <label for="nom">Nom de famille *</label>
+              <input id="nom" name="nom" autocomplete="family-name" maxlength="60" required aria-describedby="e-nom">
+              <p class="err" id="e-nom">Indique ton nom de famille.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Adresse e-mail *</label>
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" required placeholder="prenom@exemple.fr" aria-describedby="e-email">
+            <p class="err" id="e-email">Indique une adresse e-mail valide.</p>
+          </div>
+          <div class="field">
+            <label for="tel">Téléphone <span class="opt">(facultatif)</span></label>
+            <input id="tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="06 12 34 56 78" aria-describedby="e-tel">
+            <p class="err" id="e-tel">Ce numéro ne semble pas valide.</p>
+          </div>
+          <div class="hp" aria-hidden="true">
+            <label for="site">Ne pas remplir</label>
+            <input id="site" name="_honey" tabindex="-1" autocomplete="off">
+          </div>
+          <label class="consent" id="consentBox">
+            <input type="checkbox" id="consent" name="consent" required aria-describedby="e-consent">
+            <span>J'accepte que Mathis utilise mes coordonnées uniquement pour ce jeu et pour me contacter si je gagne. *</span>
+          </label>
+          <p class="err" id="e-consent">Coche la case pour pouvoir participer.</p>
+          <p class="status" id="status" role="alert"></p>
+          <button class="btn" type="submit" id="submit">Valider ma participation <span aria-hidden="true">🎄</span></button>
+          <p class="legal">Participation gratuite et sans obligation d'achat · Une participation par personne · <a href="#reglement">Règlement</a></p>
+        </form>
+
+        <div class="done" id="done">
+          <div class="seal" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17 19 7"/></svg></div>
+          <h3 id="doneTitle" tabindex="-1">C'est noté&nbsp;!</h3>
+          <p id="doneText">Ta participation est bien enregistrée. Rendez-vous à Noël pour le tirage au sort. Bonne chance&nbsp;🎅</p>
+          <button class="btn ghost sm" type="button" id="again">Inscrire une autre personne</button>
+        </div>
+
+        <div class="closed">
+          <h3>Le jeu est terminé 🎄</h3>
+          <p class="sub" style="margin:10px auto 0">Merci à tous pour vos participations&nbsp;! Le gagnant sera contacté directement par Mathis.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="reglement" aria-labelledby="titreRegl" style="padding-top:20px">
+    <div class="wrap">
+      <details>
+        <summary id="titreRegl">Règlement du jeu</summary>
+        <div class="rules">
+          <ol>
+            <li><strong>Organisateur.</strong> Le jeu « 10 coupes gratuites pour Noël » est organisé par Mathis, barber. Contact&nbsp;: <a href="mailto:rameaumathis@gmail.com">rameaumathis@gmail.com</a>.</li>
+            <li><strong>Durée.</strong> Le jeu est ouvert jusqu'au <span class="endDate">24 décembre 2026 à 23&nbsp;h&nbsp;59</span> (heure de Paris).</li>
+            <li><strong>Participation.</strong> Gratuite et sans obligation d'achat. Il suffit de remplir le formulaire de cette page. Une seule participation par personne&nbsp;; les participations incomplètes ou en double ne sont pas prises en compte.</li>
+            <li><strong>Lot.</strong> Un gagnant remporte 10 coupes gratuites chez Mathis.</li>
+            <li><strong>Tirage au sort.</strong> Le gagnant est tiré au sort parmi les participations valides le <span class="drawDate">25 décembre 2026</span>, puis contacté par e-mail ou par téléphone.</li>
+            <li><strong>Données personnelles.</strong> Tes coordonnées sont transmises à Mathis par e-mail (via le service FormSubmit) et servent uniquement à ce jeu et à contacter le gagnant. Elles ne sont ni vendues ni utilisées à d'autres fins, et sont supprimées une fois le jeu terminé. Tu peux demander leur suppression à tout moment en écrivant à <a href="mailto:rameaumathis@gmail.com">rameaumathis@gmail.com</a>.</li>
+            <li>Ce jeu n'est ni organisé, ni parrainé, ni géré par Instagram, Facebook ou Meta.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 · Mathis, barber · Jeu de Noël</span>
+    <span>Site réalisé par <a href="https://www.instagram.com/kameron__creation_site_web_" target="_blank" rel="noopener">Kameron Web Studio</a></span>
+  </div>
+</footer>
+
+<script type="module">
+/* ====== Réglages du jeu (à modifier ici si besoin) ====== */
+const FIN_DU_JEU = new Date('2026-12-24T23:59:59+01:00');
+const EMAIL_MATHIS = 'rameaumathis@gmail.com';
+const ENDPOINT = 'https://formsubmit.co/ajax/' + EMAIL_MATHIS;
+/* ======================================================== */
+
+const $ = (s) => document.querySelector(s);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Scène 3D
+(async () => {
+  try {
+    const { startScene } = await import('./scene.js');
+    window.__scene = startScene($('#scene'), { reducedMotion: reduced });
+  } catch (e) {
+    console.warn('3D indisponible', e);
+    document.querySelector('.hero').classList.add('no3d');
+  }
+})();
+
+// Compte à rebours
+const pad = (n) => String(n).padStart(2, '0');
+function tick() {
+  let ms = FIN_DU_JEU - Date.now();
+  if (ms <= 0) { closeGame(); return; }
+  const d = Math.floor(ms / 864e5); ms -= d * 864e5;
+  const h = Math.floor(ms / 36e5); ms -= h * 36e5;
+  const m = Math.floor(ms / 6e4); ms -= m * 6e4;
+  $('#cd-d').textContent = d; $('#cd-h').textContent = pad(h); $('#cd-m').textContent = pad(m); $('#cd-s').textContent = pad(Math.floor(ms / 1000));
+  setTimeout(tick, 1000 - (Date.now() % 1000));
+}
+function closeGame() {
+  $('#card').classList.add('is-closed');
+  $('#countLabel').textContent = 'Le jeu est terminé, merci pour vos participations !';
+  $('#count').hidden = true;
+  $('#heroCta').innerHTML = 'Voir les infos <span aria-hidden="true">🎄</span>';
+}
+tick();
+
+// Apparition au défilement
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+// Formulaire
+const form = $('#form'), btn = $('#submit'), status = $('#status');
+const fields = {
+  prenom: (v) => v.trim().length >= 1,
+  nom: (v) => v.trim().length >= 1,
+  email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()),
+  tel: (v) => { const t = v.trim(); if (!t) return true; const digits = t.replace(/\D/g, ''); return /^[+\d][\d\s.\-()]*$/.test(t) && digits.length >= 9 && digits.length <= 15; },
+};
+function setErr(id, bad) {
+  const input = $('#' + id), err = $('#e-' + id);
+  input.setAttribute('aria-invalid', bad ? 'true' : 'false');
+  err.classList.toggle('on', bad);
+}
+for (const id of Object.keys(fields)) {
+  $('#' + id).addEventListener('blur', (e) => { if (e.target.value) setErr(id, !fields[id](e.target.value)); });
+  $('#' + id).addEventListener('input', (e) => { if (e.target.getAttribute('aria-invalid') === 'true') setErr(id, !fields[id](e.target.value)); });
+}
+$('#consent').addEventListener('change', (e) => { if (e.target.checked) { $('#consentBox').classList.remove('invalid'); $('#e-consent').classList.remove('on'); } });
+
+function showDone(prenom) {
+  form.hidden = true;
+  document.querySelector('.form-title').hidden = true;
+  document.querySelector('.card .hint').hidden = true;
+  $('#doneTitle').textContent = prenom ? `C'est noté, ${prenom} !` : "C'est noté !";
+  $('#done').classList.add('on');
+}
+$('#again').addEventListener('click', () => {
+  form.reset();
+  for (const id of Object.keys(fields)) setErr(id, false);
+  $('#done').classList.remove('on');
+  form.hidden = false;
+  document.querySelector('.form-title').hidden = false;
+  document.querySelector('.card .hint').hidden = false;
+  $('#prenom').focus();
+});
+try {
+  const saved = JSON.parse(localStorage.getItem('jeu-noel-mathis') || 'null');
+  if (saved && saved.prenom) { showDone(saved.prenom); $('#doneText').textContent = 'Tu participes déjà au tirage au sort. Rendez-vous à Noël, bonne chance 🎅'; }
+} catch {}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  status.classList.remove('on');
+  let first = null;
+  for (const [id, ok] of Object.entries(fields)) {
+    const bad = !ok($('#' + id).value);
+    setErr(id, bad);
+    if (bad && !first) first = $('#' + id);
+  }
+  const consent = $('#consent').checked;
+  $('#consentBox').classList.toggle('invalid', !consent);
+  $('#e-consent').classList.toggle('on', !consent);
+  if (!consent && !first) first = $('#consent');
+  if (first) { first.focus(); return; }
+
+  const prenom = $('#prenom').value.trim(), nom = $('#nom').value.trim();
+  const email = $('#email').value.trim(), tel = $('#tel').value.trim();
+
+  if ($('#site').value) { showDone(prenom); return; } // robot : on ignore
+
+  btn.disabled = true;
+  const label = btn.innerHTML;
+  btn.textContent = 'Envoi en cours…';
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `🎄 Nouvelle participation : ${prenom} ${nom}`,
+        _template: 'table',
+        _captcha: 'false',
+        'Prénom': prenom,
+        'Nom': nom,
+        email,
+        'Téléphone': tel || 'Non renseigné',
+        'Consentement': "Oui, accepte que Mathis utilise ses coordonnées uniquement pour ce jeu et pour le contacter s'il gagne",
+        'Date': new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'Envoi refusé');
+    try { localStorage.setItem('jeu-noel-mathis', JSON.stringify({ prenom, at: Date.now() })); } catch {}
+    showDone(prenom);
+    $('#doneText').textContent = 'Ta participation est bien enregistrée. Rendez-vous à Noël pour le tirage au sort. Bonne chance 🎅';
+    $('#doneTitle').focus();
+  } catch (err) {
+    console.warn(err);
+    status.textContent = "Oups, l'envoi n'a pas fonctionné. Vérifie ta connexion et réessaie dans un instant.";
+    status.classList.add('on');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = label;
+  }
+});
+</script>
+</body>
+</html>
